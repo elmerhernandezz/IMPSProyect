@@ -22,7 +22,9 @@
                     <label>Materia</label>
                     <select class="form-control" name="idmateria" required>
                         {{#each materias}}
-                            <option value="{{idmateria}}" {{#ifCond idmateria ../grupo.idmateria '=='}}selected{{/ifCond}}>{{materia}}</option>
+                            <option value="{{idmateria}}" {{#if (eq idmateria ../grupo.idmateria)}}selected{{/if}}>
+                                {{materia}}
+                            </option>
                         {{/each}}
                     </select>
                 </div>
@@ -31,7 +33,9 @@
                     <label>Profesor</label>
                     <select class="form-control" name="idprofesor" required>
                         {{#each profesores}}
-                            <option value="{{idprofesor}}" {{#ifCond idprofesor ../grupo.idprofesor '=='}}selected{{/ifCond}}>{{nombre}} {{apellido}}</option>
+                            <option value="{{idprofesor}}" {{#if (eq idprofesor ../grupo.idprofesor)}}selected{{/if}}>
+                                {{nombre}} {{apellido}}
+                            </option>
                         {{/each}}
                     </select>
                 </div>

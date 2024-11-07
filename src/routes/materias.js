@@ -16,7 +16,14 @@ router.get('/agregar', (request, response) => {
 // Agregar una nueva materia
 router.post('/agregar', async (request, response) => {
     const { materia } = request.body; // Extraemos los datos del formulario
-    await queries.agregarMateria(materia); // Insertamos en la base de datos
+    const resultado = await queries.agregarMateria(materia); // Insertamos en la base de datos
+
+    if (resultado) {
+        request.flash('success', 'Materia agregada con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al agregar la materia');
+    }
+    
     response.redirect('/materias'); // Redirigimos al listado de materias
 });
 
@@ -31,7 +38,14 @@ router.get('/editar/:idmateria', async (request, response) => {
 router.post('/editar/:idmateria', async (request, response) => {
     const { idmateria } = request.params;
     const { materia } = request.body; // Nuevos datos
-    await queries.actualizarMateria(idmateria, materia); // Actualizamos los datos
+    const resultado = await queries.actualizarMateria(idmateria, materia); // Actualizamos los datos
+
+    if (resultado) {
+        request.flash('success', 'Materia actualizada con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al actualizar la materia');
+    }
+    
     response.redirect('/materias'); // Redirigimos al listado de materias
 });
 
@@ -41,7 +55,9 @@ router.get('/eliminar/:idmateria', async (request, response) => {
     const resultado = await queries.eliminarMateria(idmateria); // Eliminamos la materia
 
     if (resultado > 0) {
-        console.log('Eliminado con éxito');
+        request.flash('success', 'Materia eliminada con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al eliminar la materia');
     }
 
     response.redirect('/materias');

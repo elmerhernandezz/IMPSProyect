@@ -1,6 +1,19 @@
 const pool = require('../config/databaseController');
 
 module.exports = {
+
+    // Asignar grupo
+    asignarGrupo: async(asignacion) => {
+        try {
+            const result = await pool.query("INSERT INTO grupo_estudiantes SET ? ",
+            asignacion);
+            console.log('resultado: ', result)
+            return result;
+        } catch (error) {
+            console.log('Ocurrio un problema al asignar el grupo', error);
+        }
+    },
+
     obtenerTodosLosGrupos: async () => {
         try {
             const result = await pool.query(
@@ -21,9 +34,10 @@ module.exports = {
                 'INSERT INTO grupos (num_grupo, anio, ciclo, idmateria, idprofesor) VALUES (?, ?, ?, ?, ?)',
                 [num_grupo, anio, ciclo, idmateria, idprofesor]
             );
-            return result.insertId;
+            return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al agregar grupo: ', error);
+            return false;
         }
     },
 
@@ -48,6 +62,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al actualizar grupo: ', error);
+            return false;
         }
     },
 
@@ -59,6 +74,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al eliminar grupo: ', error);
+            return false;
         }
     }
 };

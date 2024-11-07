@@ -29,9 +29,10 @@ module.exports = {
                 'INSERT INTO profesores (nombre, apellido, fecha_nacimiento, profesion, genero, email) VALUES (?, ?, ?, ?, ?, ?)',
                 [nombre, apellido, fecha_nacimiento, profesion, genero, email]
             );
-            return result.insertId;
+            return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al agregar el profesor: ', error);
+            return false;
         }
     },
 
@@ -46,6 +47,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al actualizar el profesor: ', error);
+            return false;
         }
     },
 
@@ -56,6 +58,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al eliminar el profesor: ', error);
+            return false;
         }
     }
 };

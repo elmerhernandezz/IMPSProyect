@@ -2,11 +2,18 @@ const express = require('express');
 const morgan = require('morgan');
 const exphbs = require('express-handlebars'); // Necesario para utilizar el motor de plantillas Handlebars
 const path = require('path');
+const flash = require('connect-flash'); // Nos permite manejar mensajes en la sesion los cuales se guardan en memoria
+// y se borran luego de ser mostrados
+const session = require('express-session'); // Permite manejar sesiones, por ejemplo, para almacenar datos en la
+// memoria del servidor, tambien se puede almacenar en la base de datos.
+const MySQLStore = require('express-mysql-session')(session);
 
 // Inicializaciones
 const app = express();
 
-require('dotenv').config();
+require('dotenv').config()
+
+const { database } = require('./config/keys');
 
 // Ajustes del servidor
 app.set('port', process.env.PORT || 4500);
@@ -22,9 +29,25 @@ app.engine('.hbs', exphbs.engine({
 
 app.set('view engine', '.hbs'); // Configuración para ejecutar el motor de plantillas
 
-// Middleware
+// ===== MIDDLEWARES ===
+app.use(session({
+    secret: process.env.SESSION_KEY, // Esta es la clave secreta de la sesión
+    resave: false,                   // Para que no renueve la sesión
+    saveUninitialized: false,        // Se deja en false para que no vuelva a establecer la sesión
+    store: new MySQLStore(database)  // Se indica dónde se debe guardar la sesión
+}));
+
+app.use(flash());
 app.use(morgan('dev')); // Configurando el middleware morgan para visualizar lo que está llegando al servidor
 app.use(express.urlencoded({ extended: false })); // Sirve para aceptar datos desde formularios
+
+// ==== VARIABLES GLOBALES =====
+app.use((request, response, next) => {
+    // Haciendo global el uso de flash
+    app.locals.success = request.flash('success');
+    app.locals.error = request.flash('error');
+    next(); // Permite continuar con la ejecución del código
+});
 
 // Configuración de rutas
 app.use(require('./routes')); // Node automáticamente busca el index.js del módulo

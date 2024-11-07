@@ -24,7 +24,14 @@ router.get('/agregar', (request, response) => {
 // Agregar un nuevo profesor
 router.post('/agregar', async (request, response) => {
     const { nombre, apellido, fecha_nacimiento, profesion, genero, email } = request.body; // Extraemos los datos del formulario
-    await queries.agregarProfesor({ nombre, apellido, fecha_nacimiento, profesion, genero, email }); // Insertamos en la base de datos
+    const resultado = await queries.agregarProfesor({ nombre, apellido, fecha_nacimiento, profesion, genero, email });
+
+    if (resultado) {
+        request.flash('success', 'Profesor agregado con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al agregar el profesor');
+    }
+
     response.redirect('/profesores'); // Redirigimos al listado de profesores
 });
 
@@ -44,7 +51,14 @@ router.get('/editar/:idprofesor', async (request, response) => {
 router.post('/editar/:idprofesor', async (request, response) => {
     const { idprofesor } = request.params;
     const { nombre, apellido, fecha_nacimiento, profesion, genero, email } = request.body; // Nuevos datos
-    await queries.actualizarProfesor(idprofesor, { nombre, apellido, fecha_nacimiento, profesion, genero, email }); // Actualizamos los datos
+    const resultado = await queries.actualizarProfesor(idprofesor, { nombre, apellido, fecha_nacimiento, profesion, genero, email });
+
+    if (resultado) {
+        request.flash('success', 'Profesor actualizado con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al actualizar el profesor');
+    }
+
     response.redirect('/profesores'); // Redirigimos al listado de profesores
 });
 
@@ -54,7 +68,9 @@ router.get('/eliminar/:idprofesor', async (request, response) => {
     const resultado = await queries.eliminarProfesor(idprofesor); // Eliminamos el profesor
 
     if (resultado > 0) {
-        console.log('Eliminado con éxito');
+        request.flash('success', 'Profesor eliminado con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al eliminar el profesor');
     }
 
     response.redirect('/profesores');

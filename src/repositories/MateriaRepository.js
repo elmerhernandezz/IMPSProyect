@@ -25,9 +25,10 @@ module.exports = {
     agregarMateria: async (materia) => {
         try {
             const result = await pool.query('INSERT INTO materias (materia) VALUES (?)', [materia]);
-            return result.insertId;
+            return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al agregar la materia: ', error);
+            return false;
         }
     },
 
@@ -38,6 +39,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al actualizar la materia: ', error);
+            return false;
         }
     },
 
@@ -48,6 +50,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Ocurrió un error al eliminar la materia: ', error);
+            return false;
         }
     }
 };

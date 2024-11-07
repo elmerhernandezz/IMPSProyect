@@ -22,17 +22,34 @@ const obtenerGrupoEstudiantePorId = async (idgrupoestudiante) => {
 
 // Agregar un nuevo grupo_estudiante
 const agregarGrupoEstudiante = async (data) => {
-    await pool.query('INSERT INTO grupo_estudiantes SET ?', [data]);
+    try{
+        const result = await pool.query('INSERT INTO grupo_estudiantes SET ?', [data]);
+        return result.affectedRows > 0;
+    } catch (error){
+        return false;
+    }
 };
 
 // Actualizar un grupo_estudiante
 const actualizarGrupoEstudiante = async (idgrupoestudiante, data) => {
-    await pool.query('UPDATE grupo_estudiantes SET ? WHERE idgrupoestudiante = ?', [data, idgrupoestudiante]);
+    try{
+        const result = await pool.query('UPDATE grupo_estudiantes SET ? WHERE idgrupoestudiante = ?', [data, idgrupoestudiante]);
+        return result.affectedRows > 0;
+    } catch (error)
+    {
+        return false;
+    }
 };
 
 // Eliminar un grupo_estudiante
 const eliminarGrupoEstudiante = async (idgrupoestudiante) => {
-    await pool.query('DELETE FROM grupo_estudiantes WHERE idgrupoestudiante = ?', [idgrupoestudiante]);
+    try{
+        const result = await pool.query('DELETE FROM grupo_estudiantes WHERE idgrupoestudiante = ?', [idgrupoestudiante]);
+        return result.affectedRows > 0;
+    } catch (error)
+    {
+        return false;
+    }
 };
 
 module.exports = {

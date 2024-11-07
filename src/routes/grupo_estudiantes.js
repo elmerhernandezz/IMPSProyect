@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
     res.render('grupo_estudiantes/listado', { grupoEstudiantes });
 });
 
-
 // Ruta para mostrar el formulario para agregar un grupo_estudiante
 router.get('/agregar', async (req, res) => {
     const grupos = await queriesGrupos.obtenerTodosLosGrupos();
@@ -21,7 +20,14 @@ router.get('/agregar', async (req, res) => {
 // Ruta para agregar un nuevo grupo_estudiante
 router.post('/agregar', async (req, res) => {
     const { idgrupo, idestudiante } = req.body;
-    await queries.agregarGrupoEstudiante({ idgrupo, idestudiante });
+    const resultado = await queries.agregarGrupoEstudiante({ idgrupo, idestudiante });
+    
+    if (resultado) {
+        req.flash('success', 'Grupo estudiante agregado con éxito');
+    } else {
+        req.flash('error', 'Hubo un problema al agregar el grupo estudiante');
+    }
+    
     res.redirect('/grupo_estudiantes');
 });
 
@@ -38,14 +44,28 @@ router.get('/editar/:idgrupoestudiante', async (req, res) => {
 router.post('/editar/:idgrupoestudiante', async (req, res) => {
     const { idgrupoestudiante } = req.params;
     const { idgrupo, idestudiante } = req.body;
-    await queries.actualizarGrupoEstudiante(idgrupoestudiante, { idgrupo, idestudiante });
+    const actualizacion = await queries.actualizarGrupoEstudiante(idgrupoestudiante, { idgrupo, idestudiante });
+    
+    if (actualizacion) {
+        req.flash('success', 'Grupo estudiante actualizado con éxito');
+    } else {
+        req.flash('error', 'Hubo un problema al actualizar el grupo estudiante');
+    }
+    
     res.redirect('/grupo_estudiantes');
 });
 
 // Ruta para eliminar un grupo_estudiante
 router.get('/eliminar/:idgrupoestudiante', async (req, res) => {
     const { idgrupoestudiante } = req.params;
-    await queries.eliminarGrupoEstudiante(idgrupoestudiante);
+    const eliminacion = await queries.eliminarGrupoEstudiante(idgrupoestudiante);
+    
+    if (eliminacion) {
+        req.flash('success', 'Grupo estudiante eliminado con éxito');
+    } else {
+        req.flash('error', 'Hubo un problema al eliminar el grupo estudiante');
+    }
+    
     res.redirect('/grupo_estudiantes');
 });
 

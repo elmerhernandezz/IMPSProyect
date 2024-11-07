@@ -18,7 +18,12 @@ router.get('/agregar', async (request, response) => {
 // Endpoint para agregar un estudiante
 router.post('/agregar', async (request, response) => {
     const { nombre, apellido, email, idcarrera, usuario } = request.body; // Extraemos los datos del formulario
-    await queries.agregarEstudiante({ nombre, apellido, email, idcarrera, usuario }); // Guardamos en la base de datos
+    try {
+        await queries.agregarEstudiante({ nombre, apellido, email, idcarrera, usuario }); // Guardamos en la base de datos
+        request.flash('success', 'Estudiante agregado con éxito');
+    } catch (error) {
+        request.flash('error', 'Hubo un problema al agregar el estudiante');
+    }
     response.redirect('/estudiantes'); // Redirigimos al listado de estudiantes
 });
 
@@ -34,20 +39,29 @@ router.get('/editar/:idestudiante', async (request, response) => {
 router.post('/editar/:idestudiante', async (request, response) => {
     const { idestudiante } = request.params;
     const { nombre, apellido, email, idcarrera, usuario } = request.body; // Nuevos datos
-    await queries.actualizarEstudiante(idestudiante, { nombre, apellido, email, idcarrera, usuario }); // Actualizamos los datos
+    try {
+        await queries.actualizarEstudiante(idestudiante, { nombre, apellido, email, idcarrera, usuario }); // Actualizamos los datos
+        request.flash('success', 'Estudiante actualizado con éxito');
+    } catch (error) {
+        request.flash('error', 'Hubo un problema al actualizar el estudiante');
+    }
     response.redirect('/estudiantes'); // Redirigimos al listado de estudiantes
 });
 
 // Endpoint que permite eliminar un estudiante
 router.get('/eliminar/:idestudiante', async (request, response) => {
     const { idestudiante } = request.params;
-    const resultado = await queries.eliminarEstudiante(idestudiante);
-
-    if (resultado > 0) {
-        console.log('Eliminado con éxito');
+    try {
+        const resultado = await queries.eliminarEstudiante(idestudiante);
+        if (resultado > 0) {
+            request.flash('success', 'Estudiante eliminado con éxito');
+        } else {
+            request.flash('error', 'No se pudo eliminar el estudiante');
+        }
+    } catch (error) {
+        request.flash('error', 'Hubo un problema al eliminar el estudiante');
     }
-
-    response.redirect('/estudiantes');
+    response.redirect('/estudiantes'); // Redirigimos al listado de estudiantes
 });
 
 module.exports = router;

@@ -1,5 +1,20 @@
 const pool = require('../config/databaseController');
 
+const generarCodigoAleatorio = () => {
+    // Genera una letra aleatoria entre 'a' y 'z'
+    const letraAleatoria = () => String.fromCharCode(97 + Math.floor(Math.random() * 26));
+
+    // Genera un dígito aleatorio entre 0 y 9
+    const digitoAleatorio = () => Math.floor(Math.random() * 10);
+
+    // Construye el código en el formato solicitado
+    const codigo = `${letraAleatoria()}${letraAleatoria()}${digitoAleatorio()}${digitoAleatorio()}-` +
+                   `${letraAleatoria()}${digitoAleatorio()}${digitoAleatorio()}-` +
+                   `${letraAleatoria()}${digitoAleatorio()}${digitoAleatorio()}`;
+
+    return codigo;
+};
+
 module.exports = {
 
     // Consulta para obtener todos los estudiantes
@@ -19,6 +34,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al eliminar el registro', error);
+            return false;
         }
     },
 
@@ -26,15 +42,20 @@ module.exports = {
     agregarEstudiante: async (estudiante) => {
         try {
             const { nombre, apellido, email, idcarrera, usuario } = estudiante;
+
+            const idestudiante = generarCodigoAleatorio();
+
             const result = await pool.query(
-                'INSERT INTO estudiantes (nombre, apellido, email, idcarrera, usuario) VALUES (?, ?, ?, ?, ?)',
-                [nombre, apellido, email, idcarrera, usuario]
+                'INSERT INTO estudiantes (idestudiante, nombre, apellido, email, idcarrera, usuario) VALUES (?,?, ?, ?, ?, ?)',
+                [idestudiante, nombre, apellido, email, idcarrera, usuario]
             );
-            return result.insertId;
+            return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al agregar el estudiante: ', error);
+            return false;
         }
     },
+    
 
     // Actualizar un estudiante
     actualizarEstudiante: async (idestudiante, estudiante) => {
@@ -47,6 +68,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al actualizar el estudiante: ', error);
+            return false;
         }
     },
 

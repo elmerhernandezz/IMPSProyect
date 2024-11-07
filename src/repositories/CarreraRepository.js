@@ -15,16 +15,17 @@ module.exports = {
     // Agregar una nueva carrera
     agregarCarrera: async (carrera) => {
         try {
-            const { idcarrera, carrera: nombreCarrera } = carrera; // Usamos 'carrera' como nombre de variable
+            const { idcarrera, carrera: nombreCarrera } = carrera;
             const result = await pool.query(
                 'INSERT INTO carreras (idcarrera, carrera) VALUES (?, ?)',
                 [idcarrera, nombreCarrera]
             );
-            return result.insertId;
+            return result.affectedRows > 0; // Devuelve true si se insertó al menos una fila
         } catch (error) {
             console.error('Error al agregar la carrera: ', error);
+            return false;
         }
-    },
+    },    
 
     // Obtener una carrera por ID
     obtenerCarreraPorId: async (idcarrera) => {
@@ -47,6 +48,7 @@ module.exports = {
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error al actualizar la carrera: ', error);
+            return false;
         }
     },
 
@@ -54,9 +56,10 @@ module.exports = {
     eliminarCarrera: async (idcarrera) => {
         try {
             const result = await pool.query('DELETE FROM carreras WHERE idcarrera = ?', [idcarrera]);
-            return result.affectedRows > 0;
+            return result.affectedRows > 0; // Devuelve true si se eliminó al menos una fila
         } catch (error) {
             console.error('Error al eliminar la carrera: ', error);
+            return false;
         }
-    }
+    }    
 };

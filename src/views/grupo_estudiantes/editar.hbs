@@ -10,7 +10,9 @@
                     <label for="idgrupo">Grupo</label>
                     <select class="form-control" name="idgrupo" id="idgrupo" required>
                         {{#each grupos}}
-                            <option value="{{idgrupo}}" {{#ifCond idgrupo grupoEstudiante.idgrupo '=='}}selected{{/ifCond}}>{{num_grupo}}</option>
+                            <option value="{{idgrupo}}" {{#if (eq idgrupo ../grupoEstudiante.idgrupo)}}selected{{/if}}>
+                                {{num_grupo}}
+                            </option>
                         {{/each}}
                     </select>
                 </div>
@@ -20,7 +22,9 @@
                     <label for="idestudiante">Estudiante</label>
                     <select class="form-control" name="idestudiante" id="idestudiante" required>
                         {{#each estudiantes}}
-                            <option value="{{idestudiante}}" {{#ifCond idestudiante grupoEstudiante.idestudiante '=='}}selected{{/ifCond}}>{{nombre}} {{apellido}}</option>
+                            <option value="{{idestudiante}}" {{#if (eq idestudiante ../grupoEstudiante.idestudiante)}}selected{{/if}}>
+                                {{nombre}} {{apellido}}
+                            </option>
                         {{/each}}
                     </select>
                 </div>

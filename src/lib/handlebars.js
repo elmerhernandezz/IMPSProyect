@@ -15,3 +15,10 @@ helpers.registerHelper('ifCond', function (v1, operator, v2, options) {
 });
 
 module.exports = helpers;
+
+const Handlebars = require('handlebars');
+
+module.exports = {
+    eq: (a, b) => a === b
+};
+

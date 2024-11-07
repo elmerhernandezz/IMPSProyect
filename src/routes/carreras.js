@@ -15,11 +15,23 @@ router.get('/agregar', (request, response) => {
 });
 
 // Endpoint para agregar una carrera
+
 router.post('/agregar', async (request, response) => {
-    const { idcarrera, carrera } = request.body; // Extraemos los datos del formulario
-    await queries.agregarCarrera({ idcarrera, carrera }); // Guardamos en la base de datos
-    response.redirect('/carreras'); // Redirigimos al listado de carreras
+    const { idcarrera, carrera } = request.body;
+    const nuevaCarrera = { carrera, idcarrera };
+    
+    // Se trata de una inserción
+    const resultado = await queries.agregarCarrera(nuevaCarrera);
+    
+    if (resultado) {
+        request.flash('success', 'Registro insertado con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al guardar el registro');
+    }
+    
+    response.redirect('/carreras');
 });
+
 
 // Endpoint para mostrar el formulario para editar una carrera
 router.get('/editar/:idcarrera', async (request, response) => {
@@ -32,18 +44,30 @@ router.get('/editar/:idcarrera', async (request, response) => {
 router.post('/editar/:idcarrera', async (request, response) => {
     const { idcarrera } = request.params; // ID actual de la carrera
     const { idcarrera: nuevoIdCarrera, carrera } = request.body; // Nuevos datos, incluyendo el nuevo ID
-    await queries.actualizarCarrera(idcarrera, { idcarrera: nuevoIdCarrera, carrera }); // Actualizamos la carrera
+    
+    const nuevaCarrera = { idcarrera: nuevoIdCarrera, carrera }; // Nueva carrera con los datos actualizados
+    const actualizacion = await queries.actualizarCarrera(idcarrera, nuevaCarrera); // Intentamos actualizar la carrera
+    
+    if (actualizacion) {
+        request.flash('success', 'Registro actualizado con éxito');
+    } else {
+        request.flash('error', 'Ocurrió un problema al actualizar el registro');
+    }
+
     response.redirect('/carreras'); // Redirigimos al listado de carreras
 });
 
 
 // Endpoint para eliminar una carrera
 router.get('/eliminar/:idcarrera', async (request, response) => {
+    // Desestructuramos el objeto que nos mandan en la petición y extraemos el idcarrera
     const { idcarrera } = request.params;
     const resultado = await queries.eliminarCarrera(idcarrera);
 
     if (resultado > 0) {
-        console.log('Eliminado con éxito');
+        request.flash('success', 'Eliminación correcta');
+    } else {
+        request.flash('error', 'Error al eliminar');
     }
 
     response.redirect('/carreras');
