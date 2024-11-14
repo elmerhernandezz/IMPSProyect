@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const queries = require('../repositories/ProfesorRepository');
+const { isLoggedIn } = require('../lib/auth');
 
 // Mostrar todos los profesores
-router.get('/', async (request, response) => {
+router.get('/', isLoggedIn, async (request, response) => {
     let profesores = await queries.obtenerTodosLosProfesores();
 
     // Formateamos las fechas de nacimiento
@@ -17,12 +18,12 @@ router.get('/', async (request, response) => {
 });
 
 // Mostrar el formulario para agregar un nuevo profesor
-router.get('/agregar', (request, response) => {
+router.get('/agregar', isLoggedIn, async(request, response) => {
     response.render('profesores/agregar'); // Mostramos el formulario de agregar
 });
 
 // Agregar un nuevo profesor
-router.post('/agregar', async (request, response) => {
+router.post('/agregar', isLoggedIn, async (request, response) => {
     const { nombre, apellido, fecha_nacimiento, profesion, genero, email } = request.body; // Extraemos los datos del formulario
     const resultado = await queries.agregarProfesor({ nombre, apellido, fecha_nacimiento, profesion, genero, email });
 
@@ -36,7 +37,7 @@ router.post('/agregar', async (request, response) => {
 });
 
 // Endpoint que permite mostrar el formulario para editar un profesor
-router.get('/editar/:idprofesor', async (request, response) => {
+router.get('/editar/:idprofesor', isLoggedIn, async (request, response) => {
     const { idprofesor } = request.params;
     const profesor = await queries.obtenerProfesorPorId(idprofesor); // Obtener datos del profesor a editar
 
@@ -48,7 +49,7 @@ router.get('/editar/:idprofesor', async (request, response) => {
 });
 
 // Actualizar un profesor
-router.post('/editar/:idprofesor', async (request, response) => {
+router.post('/editar/:idprofesor', isLoggedIn, async (request, response) => {
     const { idprofesor } = request.params;
     const { nombre, apellido, fecha_nacimiento, profesion, genero, email } = request.body; // Nuevos datos
     const resultado = await queries.actualizarProfesor(idprofesor, { nombre, apellido, fecha_nacimiento, profesion, genero, email });
@@ -63,7 +64,7 @@ router.post('/editar/:idprofesor', async (request, response) => {
 });
 
 // Eliminar un profesor
-router.get('/eliminar/:idprofesor', async (request, response) => {
+router.get('/eliminar/:idprofesor', isLoggedIn, async (request, response) => {
     const { idprofesor } = request.params;
     const resultado = await queries.eliminarProfesor(idprofesor); // Eliminamos el profesor
 
